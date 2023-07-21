@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        const options = {};
         const includeReviews = req.query.includeReviews;
         if (includeReviews === 'true') {
           options.include = Review;
