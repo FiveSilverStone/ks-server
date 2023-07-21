@@ -17,6 +17,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+      const reviews = await Review.findAll();
+      return res.json(reviews);
+  } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   const id = req.params.id;
   try {
