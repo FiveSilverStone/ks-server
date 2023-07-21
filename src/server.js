@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const { sequelize } = require("../models");
 const reviewsRouter = require("./routes/reviews");
+const adminRouter = require("./routes/admin");
+const authRouter = require("./routes/auth");
 
 const app = express();
 
@@ -13,5 +15,8 @@ sequelize.authenticate()
   .catch(err => console.log("Error: " + err));
 
 app.use("/reviews", reviewsRouter);
+app.use("/admin", adminRouter);
+app.use("/auth", authRouter);
+
 
 app.listen(9999, () => console.log("Server started on port 9999"));

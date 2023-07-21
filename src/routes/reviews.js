@@ -1,8 +1,9 @@
 const express = require('express');
 const { Review } = require('../../models');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   const { review, address, name, category, rating } = req.body;
 
   try {
@@ -42,7 +43,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const id = req.params.id;
   const { review, address, name, category, rating } = req.body;
 
@@ -65,7 +66,7 @@ router.put('/:id', async (req, res) => {
 });
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -82,5 +83,6 @@ router.delete('/:id', async (req, res) => {
     return res.status(500).json({ error: 'Something went wrong' });
   }
 });
+
 
 module.exports = router;
