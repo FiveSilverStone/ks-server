@@ -3,7 +3,7 @@ const router = express.Router();
 const { Admin } = require('../../models');
 
 router.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, nickname } = req.body;
   
   try {
     const existingAdmin = await Admin.findOne({ where: { email } });
@@ -12,7 +12,8 @@ router.post('/signup', async (req, res) => {
     }
     const newAdmin = await Admin.create({
       email,
-      password
+      password,
+      nickname
     });
 
     return res.status(201).json({ message: 'Admin created successfully', admin: newAdmin });

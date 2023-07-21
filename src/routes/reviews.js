@@ -1,5 +1,5 @@
 const express = require('express');
-const { Review, Store } = require('../../models');
+const { Review, Store, Admin } = require('../../models');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
@@ -20,7 +20,13 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   try {
-      const reviews = await Review.findAll({ include: Store });
+      const reviews = await Review.findAll({ include: [
+        { model: Store },
+        {
+          model: Admin,
+          attributes: ['nickname']
+        }
+      ] });
 
       return res.json(reviews);
   } catch (err) {
@@ -32,7 +38,13 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params.id;
   try {
-      const review = await Review.findByPk(id, { include: Store });
+      const review = await Review.findByPk(id, { include: [
+        { model: Store },
+        {
+          model: Admin,
+          attributes: ['nickname']
+        }
+      ] });
       if (review) {
           return res.json(review);
       } else {
