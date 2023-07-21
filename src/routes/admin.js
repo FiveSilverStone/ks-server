@@ -1,7 +1,5 @@
-// routes/admin.js
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
 const { Admin } = require('../../models');
 
 router.post('/signup', async (req, res) => {
@@ -12,11 +10,9 @@ router.post('/signup', async (req, res) => {
     if (existingAdmin) {
       return res.status(409).json({ error: 'Admin already exists' });
     }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = await Admin.create({
       email,
-      password: hashedPassword
+      password
     });
 
     return res.status(201).json({ message: 'Admin created successfully', admin: newAdmin });
