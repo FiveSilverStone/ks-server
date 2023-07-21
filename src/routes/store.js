@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Store, Review } = require('../../models');
+const { Store, Review, Admin } = require('../../models');
 
 // CREATE
 router.post('/', async (req, res) => {
@@ -33,7 +33,13 @@ router.get('/:id', async (req, res) => {
         const options = {};
         const includeReviews = req.query.includeReviews;
         if (includeReviews === 'true') {
-          options.include = Review;
+          options.include = [{
+            model: Review,
+            include: [{
+              model: Admin,
+              attributes: ['nickname']
+            }]
+          }];
         }
 
         const store = await Store.findByPk(id, options);
