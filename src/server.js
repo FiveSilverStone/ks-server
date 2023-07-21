@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { sequelize } = require("../models");
+const storeRouter = require("./routes/store");
 const reviewsRouter = require("./routes/reviews");
 const adminRouter = require("./routes/admin");
 const authRouter = require("./routes/auth");
@@ -14,6 +15,7 @@ sequelize.authenticate()
   .then(() => console.log("Database connected..."))
   .catch(err => console.log("Error: " + err));
 
+app.use("/stores", storeRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/admin", adminRouter);
 app.use("/auth", authRouter);

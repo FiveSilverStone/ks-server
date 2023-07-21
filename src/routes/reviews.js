@@ -1,14 +1,14 @@
 const express = require('express');
-const { Review } = require('../../models');
+const { Review, Store } = require('../../models');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/', auth, async (req, res) => {
-  const { review, address, name, category, rating } = req.body;
-
+  const { review, taste_rating, service_rating, price_rating, hygiene_rating, storeId } = req.body;
+  const { adminId } = req.userData;
   try {
     const newReview = await Review.create({
-      review, address, name, category, rating
+      review, taste_rating, service_rating, price_rating, hygiene_rating, storeId, adminId
     });
 
     return res.json(newReview);
@@ -18,9 +18,10 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-      const reviews = await Review.findAll();
+      const reviews = await Review.findAll({ include: Store });
+
       return res.json(reviews);
   } catch (err) {
       console.log(err);
@@ -31,7 +32,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params.id;
   try {
-      const review = await Review.findByPk(id);
+      const review = await Review.findByPk(id, { include: Store });
       if (review) {
           return res.json(review);
       } else {
@@ -45,19 +46,20 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', auth, async (req, res) => {
   const id = req.params.id;
-  const { review, address, name, category, rating } = req.body;
+  const { adminId } = req.userData;
+  const { review, taste_rating, service_rating, price_rating, hygiene_rating, storeId } = req.body;
 
   try {
-    const targetReview = await Review.findByPk(id);
+    const targetReview = await Review.findOne({ where: { id, adminId } });
 
     if (targetReview) {
       await targetReview.update({
-        review, address, name, category, rating
+        review, taste_rating, service_rating, price_rating, hygiene_rating, storeId
       });
 
       return res.json({ message: 'Review updated successfully' });
     } else {
-      return res.status(404).json({ error: 'Review not found' });
+      return res.status(404).json({ error: 'Review not found or not owned by the current user' });
     }
   } catch (err) {
     console.log(err);
@@ -68,15 +70,16 @@ router.put('/:id', auth, async (req, res) => {
 
 router.delete('/:id', auth, async (req, res) => {
   const id = req.params.id;
+  const { adminId } = req.userData;
 
   try {
-    const targetReview = await Review.findByPk(id);
+    const targetReview = await Review.findOne({ where: { id, adminId } });
 
     if (targetReview) {
       await targetReview.destroy();
       return res.json({ message: 'Review deleted successfully' });
     } else {
-      return res.status(404).json({ error: 'Review not found' });
+      return res.status(404).json({ error: 'Review not found or not owned by the current user' });
     }
   } catch (err) {
     console.log(err);
