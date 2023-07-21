@@ -14,4 +14,4 @@ sequelize.authenticate()
 
 app.use("/reviews", reviewsRouter);
 
-app.listen(9999, () => console.log("Server started on port 5000"));
+app.listen(9999, () => console.log("Server started on port 9999"));
